@@ -3,7 +3,7 @@
     "express": "^5.2.1",
     "nodemon": "^3.1.14"
   },
-  "name": "08devintapi",
+  "name": "10-08codbackend",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
