@@ -1,4 +1,4 @@
-const { lerArquivo } = require('../dados/arquivo');
+const { lerArquivo } = require('../dados/arquivo.js');
 
 function listarProdutos(categoria) {
   const produtos = lerArquivo();

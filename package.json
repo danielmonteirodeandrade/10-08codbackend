@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielmonteirodeandrade/10-08devintapi.git"
+    "url": "git+https://github.com/danielmonteirodeandrade/10-08codbackend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/danielmonteirodeandrade/10-08devintapi/issues"
+    "url": "https://github.com/danielmonteirodeandrade/10-08codbackend/issues"
   },
-  "homepage": "https://github.com/danielmonteirodeandrade/10-08devintapi#readme"
+  "homepage": "https://github.com/danielmonteirodeandrade/10-08codbackend#readme"
 }

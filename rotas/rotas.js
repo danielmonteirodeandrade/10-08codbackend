@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { listarProdutos } = require('../funcoes/listarProdutos');
-const { buscarProduto } = require('../funcoes/buscarProduto');
-const { cadastrarProduto } = require('../funcoes/cadastrarProduto');
+const { listarProdutos } = require('../funcoes/listarprodutos.js');
+const { buscarProduto } = require('../funcoes/buscarProduto.js');
+const { cadastrarProduto } = require('../funcoes/cadastrarproduto.js');
 
 // 1. Listar todos e filtro por Query String
 router.get('/', (req, res) => {

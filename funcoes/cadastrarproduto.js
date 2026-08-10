@@ -1,42 +1,45 @@
-function cadastrarproduto(dadosproduto) {
-  const produto = lerproduto();
-  const { id, nome, preco, quantidade } = dadosproduto;
+const { lerArquivo, gravarArquivo } = require('../dados/arquivo.js');
 
-  if (!id || !nome || preco === undefined || quantidade === undefined) {
+function cadastrarProduto(dadosProduto) {
+  const { id, nome, preco, categoria, estoque } = dadosProduto;
+
+  if (!id || !nome || preco === undefined || !categoria || estoque === undefined) {
     return {
       sucesso: false,
       status: 400,
-      mensagem: 'Todos os campos (id, nome, preco, quantidade) são de preenchimento obrigatório.'
+      mensagem: 'Todos os campos (id, nome, preco, categoria, estoque) são obrigatórios.'
     };
   }
 
-  const idJaExiste = produto.some((item) => item.id === parseInt(id));
-  if (idJaExiste) {
+  const produtos = lerArquivo();
+
+  const idExiste = produtos.some((p) => p.id === parseInt(id));
+  if (idExiste) {
     return {
       sucesso: false,
-      status: 409,
-      mensagem: `Erro: Já existe um item no estoque cadastrado com o ID ${id}.`
+      status: 400,
+      mensagem: `Já existe um produto com o ID ${id}.`
     };
   }
 
-  const novoproduto = {
+  const novoProduto = {
     id: parseInt(id),
     nome: nome.trim(),
     preco: parseFloat(preco),
-    quantidade: parseInt(quantidade)
+    categoria: categoria.trim(),
+    estoque: parseInt(estoque)
   };
 
-  produto.push(novoproduto);
-  gravarproduto(produto);
+  produtos.push(novoProduto);
+  gravarArquivo(produtos);
 
   return {
     sucesso: true,
     status: 201,
-    mensagem: 'Item cadastrado no arquivo com sucesso!',
-    produto: novoproduto
+    mensagem: 'Produto cadastrado com sucesso!',
+    produto: novoProduto
   };
 }
 
-module.exports = {
-  cadastrarproduto
-};
+// CERTIFIQUE-SE DE EXPORTAR COMO OBJETO:
+module.exports = { cadastrarProduto };
