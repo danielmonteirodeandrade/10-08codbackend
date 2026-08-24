@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+   <main class="container">
+       <h1>Painel de Produtos</h1>
+
+       <div class="3btns">
+        <button id="btn-form-toggle">Cadastrar Produto</button>
+        <button id="btn-listar">Listar Produtos</button>
+        <button id="btn-atualizar">Atualizar Produtos</button>
+       </div>
+       <section id="section-forms" class="card-forms">
+        <h2>Cadastro de Produto</h2>
+        <form id="produto">
+            <div class="input-group">
+                <label for="nome">Nome do Produto:</label>
+                <input type="text" id="nome" name="nome" required placeholder="Digite o nome do produto:">
+            </div>
+            <div class="input-group">
+                <label for="preco">Preço do Produto:</label>
+                <input type="text" id="preco" name="preco" required placeholder="Digite o preço do produto:">
+            </div>
+            <div class="input-group">
+                <label for="categoria">Categoria do Produto:</label>
+                <input type="text" id="categoria" name="categoria" required placeholder="Digite a categoria do produto:">
+            </div>
+            <div class="input-group">
+                <label for="quantidade no estoque">Quantidade do Produto no estoque:</label>
+                <input type="text" id="estoque" name="quantidade" required placeholder="Digite a quantidade do produto:">
+            </div>
+            <button type="submit" class="btn-salvar">Cadastrar Produto</button>
+        </form>
+       </section>
+
+       <section id="section-listagem" class="card-listagem">
+        <h2>Listagem de Produtos</h2>
+        <div id="lista-produtos" class="lista-produtos"></div>
+       </section>
+   </main>
+   <script src="../js/script.js"></script>
+</body>
+</html>
