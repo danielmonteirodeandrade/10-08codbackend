@@ -1,58 +1,145 @@
-const API_URL = 'http://localhost:3000/produtos';
-const $ = (id) => document.getElementById(id);
+const API_URL = '/produtos';
 
-// Ações dos botões da tela
-$('btn-form-toggle').onclick = () => $('section-forms').classList.toggle('hidden');
-$('btn-listar').onclick = () => ($('section-listagem').classList.remove('hidden'), buscarProdutos());
-$('btn-atualizar').onclick = () => ($('section-listagem').classList.remove('hidden'), buscarProdutos());
+const formLogin = document.getElementById('form-login');
+const formProduto = document.getElementById('form-produto');
+const listaProdutos = document.getElementById('lista-produtos');
 
-// GET: Busca e renderiza a lista no DOM
-async function buscarProdutos() {
-  try {
-    const res = await fetch(API_URL);
-    const produtos = await res.json();
+const cardLogin = document.getElementById('card-login');
+const cardSessao = document.getElementById('card-sessao');
+const cardCadastro = document.getElementById('card-cadastro');
+const btnLogout = document.getElementById('btn-logout');
 
-    $('lista-produtos').innerHTML = produtos.length ? produtos.map(p => `
-      <div class="item-produto">
-        <h3>#${p.id} - ${p.nome}</h3>
-        <p><strong>Preço:</strong> R$ ${Number(p.preco).toFixed(2)}</p>
-        <p><strong>Categoria:</strong> ${p.categoria}</p>
-        <p><strong>Estoque:</strong> ${p.estoque} un</p>
-      </div>
-    `).join('') : '<p>Nenhum produto cadastrado.</p>';
-  } catch (err) {
-    $('lista-produtos').innerHTML = '<p style="color:red">Erro ao carregar produtos.</p>';
+// Alternar exibição dos formulários com base na existência do Token
+function atualizarInterfaceSessao() {
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    cardLogin.style.display = 'none';
+    cardSessao.style.display = 'block';
+    cardCadastro.style.display = 'block';
+  } else {
+    cardLogin.style.display = 'block';
+    cardSessao.style.display = 'none';
+    cardCadastro.style.display = 'none';
   }
 }
 
-// POST: Envia os dados para a API
-$('produto').onsubmit = async (e) => {
-  e.preventDefault();
+// 1. Processar Login (POST /produtos/login)
+formLogin.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
-  const body = {
-    id: Number($('id').value),
-    nome: $('nome').value.trim(),
-    preco: Number($('preco').value.replace(',', '.')),
-    categoria: $('categoria').value.trim(),
-    estoque: Number($('estoque').value)
+  const usernameInput = document.getElementById('username').value;
+  const passwordInput = document.getElementById('password').value;
+
+  try {
+    const resposta = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: usernameInput, password: passwordInput })
+    });
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(resultado.mensagem || 'Falha na autenticação.');
+      return;
+    }
+
+    localStorage.setItem('token', resultado.token);
+    formLogin.reset();
+    atualizarInterfaceSessao();
+  } catch (erro) {
+    console.error(erro);
+    alert('Erro ao realizar login.');
+  }
+});
+
+// 2. Encerrar Sessão
+btnLogout.addEventListener('click', () => {
+  localStorage.removeItem('token');
+  atualizarInterfaceSessao();
+});
+
+// 3. Buscar Produtos (GET /produtos - Público)
+async function carregarProdutos() {
+  try {
+    const resposta = await fetch(API_URL);
+    if (!resposta.ok) throw new Error('Erro ao obter a lista de produtos.');
+
+    const produtos = await resposta.json();
+    exibirProdutos(produtos);
+  } catch (erro) {
+    console.error(erro);
+    listaProdutos.innerHTML = '<p>Erro ao carregar produtos.</p>';
+  }
+}
+
+function exibirProdutos(produtos) {
+  listaProdutos.innerHTML = '';
+
+  if (produtos.length === 0) {
+    listaProdutos.innerHTML = '<p>Nenhum produto cadastrado.</p>';
+    return;
+  }
+
+  produtos.forEach((produto) => {
+    const card = document.createElement('div');
+    card.classList.add('item-produto');
+    card.innerHTML = `
+      <h3>${produto.nome}</h3>
+      <p><strong>ID:</strong> ${produto.id}</p>
+      <p><strong>Categoria:</strong> ${produto.categoria}</p>
+      <p><strong>Estoque:</strong> ${produto.estoque} un.</p>
+      <p class="preco">R$ ${Number(produto.preco).toFixed(2)}</p>
+    `;
+    listaProdutos.appendChild(card);
+  });
+}
+
+// 4. Cadastrar Produto (POST /produtos - Protegido por Token)
+formProduto.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Você precisa estar autenticado para cadastrar produtos.');
+    return;
+  }
+
+  const novoProduto = {
+    id: Number(document.getElementById('id').value),
+    nome: document.getElementById('nome').value,
+    preco: Number(document.getElementById('preco').value),
+    categoria: document.getElementById('categoria').value,
+    estoque: Number(document.getElementById('estoque').value)
   };
 
   try {
-    const res = await fetch(API_URL, {
+    const resposta = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(novoProduto)
     });
-    const data = await res.json();
 
-    alert(data.mensagem);
-    if (res.ok) {
-      $('produto').reset();
-      $('section-forms').classList.add('hidden');
-      $('section-listagem').classList.remove('hidden');
-      buscarProdutos();
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(resultado.mensagem || 'Erro ao cadastrar produto.');
+      return;
     }
-  } catch (err) {
+
+    alert('Produto cadastrado com sucesso!');
+    formProduto.reset();
+    carregarProdutos();
+  } catch (erro) {
+    console.error(erro);
     alert('Erro de conexão com o servidor.');
   }
-};
+});
+
+// Inicialização
+atualizarInterfaceSessao();
+carregarProdutos();

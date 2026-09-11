@@ -1,4 +1,4 @@
-const produtosServico = require('../servicos/produtosServico');
+const { listarProdutos, buscarProdutoPorId, cadastrarProduto } = require('../services/produtosServiço.js');
 
 function listar(req, res) {
   const { categoria } = req.query;
