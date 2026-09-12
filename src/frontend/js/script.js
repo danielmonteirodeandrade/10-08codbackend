@@ -1,4 +1,7 @@
-const API_URL = '/produtos';
+
+const API_BASE_URL = 'http://localhost:3000';
+const API_URL = `${API_BASE_URL}/produtos`;
+const LOGIN_URL = `${API_BASE_URL}/login`;
 
 const formLogin = document.getElementById('form-login');
 const formProduto = document.getElementById('form-produto');
@@ -9,22 +12,22 @@ const cardSessao = document.getElementById('card-sessao');
 const cardCadastro = document.getElementById('card-cadastro');
 const btnLogout = document.getElementById('btn-logout');
 
-// Alternar exibição dos formulários com base na existência do Token
+// Alternar exibição utilizando a classe CSS .oculto
 function atualizarInterfaceSessao() {
   const token = localStorage.getItem('token');
 
   if (token) {
-    cardLogin.style.display = 'none';
-    cardSessao.style.display = 'block';
-    cardCadastro.style.display = 'block';
+    cardLogin.classList.add('oculto');
+    cardSessao.classList.remove('oculto');
+    cardCadastro.classList.remove('oculto');
   } else {
-    cardLogin.style.display = 'block';
-    cardSessao.style.display = 'none';
-    cardCadastro.style.display = 'none';
+    cardLogin.classList.remove('oculto');
+    cardSessao.classList.add('oculto');
+    cardCadastro.classList.add('oculto');
   }
 }
 
-// 1. Processar Login (POST /produtos/login)
+// 1. Processar Login (POST /login)
 formLogin.addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -32,7 +35,7 @@ formLogin.addEventListener('submit', async (event) => {
   const passwordInput = document.getElementById('password').value;
 
   try {
-    const resposta = await fetch(`${API_URL}/login`, {
+    const resposta = await fetch(LOGIN_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: usernameInput, password: passwordInput })
@@ -41,11 +44,14 @@ formLogin.addEventListener('submit', async (event) => {
     const resultado = await resposta.json();
 
     if (!resposta.ok) {
-      alert(resultado.mensagem || 'Falha na autenticação.');
+      alert(resultado.mensagem || resultado.error || 'Falha na autenticação.');
       return;
     }
 
     localStorage.setItem('token', resultado.token);
+
+    document.getElementById('usuario-logado').textContent = usernameInput;
+
     formLogin.reset();
     atualizarInterfaceSessao();
   } catch (erro) {
@@ -77,7 +83,7 @@ async function carregarProdutos() {
 function exibirProdutos(produtos) {
   listaProdutos.innerHTML = '';
 
-  if (produtos.length === 0) {
+  if (!Array.isArray(produtos) || produtos.length === 0) {
     listaProdutos.innerHTML = '<p>Nenhum produto cadastrado.</p>';
     return;
   }
@@ -96,7 +102,7 @@ function exibirProdutos(produtos) {
   });
 }
 
-// 4. Cadastrar Produto (POST /produtos - Protegido por Token)
+// 4. Cadastrar Produto (POST /produtos - Protegido por Token e Admin)
 formProduto.addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -127,7 +133,7 @@ formProduto.addEventListener('submit', async (event) => {
     const resultado = await resposta.json();
 
     if (!resposta.ok) {
-      alert(resultado.mensagem || 'Erro ao cadastrar produto.');
+      alert(resultado.mensagem || resultado.error || 'Erro ao cadastrar produto.');
       return;
     }
 

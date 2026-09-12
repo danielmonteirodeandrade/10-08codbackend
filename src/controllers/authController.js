@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
-const chave_secreta = require('../middleware/authmiddleware.js');
+const { chave_secreta } = require('../middleware/authmiddleware.js');
 
 function login (req, res){
 const {username, password} = req.body;
 
 
 if (username === 'admin' && password === '1234') {
-    const token = jwt.sign({username, role: 'admin'}, chave_secreta, {Expires_In: '1h'});
+    const token = jwt.sign({username, role: 'admin'}, chave_secreta, {expiresIn: '1h'});
     return res.status(200).json({
         sucesso: true,
         mensagem: 'Login realizado.',

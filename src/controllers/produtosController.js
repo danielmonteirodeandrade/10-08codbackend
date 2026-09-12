@@ -2,13 +2,13 @@ const { listarProdutos, buscarProdutoPorId, cadastrarProduto } = require('../ser
 
 function listar(req, res) {
   const { categoria } = req.query;
-  const produtos = produtosServico.listarProdutos(categoria);
+  const produtos = listarProdutos(categoria);
   return res.status(200).json(produtos);
 }
 
 function buscar(req, res) {
   const { id } = req.params;
-  const produto = produtosServico.buscarProdutoPorId(id);
+  const produto = buscarProdutoPorId(id);
 
   if (!produto) {
     return res.status(404).json({ mensagem: 'Produto não encontrado.' });
@@ -26,7 +26,7 @@ function cadastrar(req, res) {
     });
   }
 
-  const resultado = produtosServico.cadastrarProduto({ id, nome, preco, categoria, estoque });
+  const resultado = cadastrarProduto({ id, nome, preco, categoria, estoque });
 
   if (resultado.erro) {
     return res.status(400).json({ mensagem: resultado.erro });
