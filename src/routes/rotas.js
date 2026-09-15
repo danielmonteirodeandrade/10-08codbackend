@@ -9,5 +9,7 @@ rotas.post('/login', authController.login);
 rotas.get('/produtos', produtosController.listar);
 rotas.get('/produtos/:id', produtosController.buscar);
 rotas.post('/produtos', authmiddleware.AutenticarToken, authmiddleware.AutorizarAdmin, produtosController.cadastrar);
+rotas.put('/produtos/:id', authmiddleware.AutenticarToken, produtosController.atualizar);
+rotas.delete('/produtos/:id', authmiddleware.AutenticarToken, produtosController.deletar);
 
 module.exports = rotas;

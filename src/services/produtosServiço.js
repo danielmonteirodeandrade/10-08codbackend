@@ -1,47 +1,50 @@
-const { lerArquivo, gravarArquivo } = require('../data/arquivo.js');
+const supabase = require('../data/supabase.js');
 
 function listarProdutos(categoria) {
-  const produtos = lerArquivo();
+  let query = supabase.from('produtos').select('*');
 
   if (categoria) {
-    return produtos.filter(
-      (p) => p.categoria.toLowerCase() === categoria.toLowerCase()
-    );
+    query = query.eq('categoria', categoria);
   }
 
-  return produtos;
+  return query;
 }
 
 function buscarProdutoPorId(id) {
-  const produtos = lerArquivo();
-  return produtos.find((p) => p.id === parseInt(id));
+  return supabase
+    .from('produtos')
+    .select('*')
+    .eq('id', id)
+    .single();
 }
 
 function cadastrarProduto(dadosProduto) {
-  const { id, nome, preco, categoria, estoque } = dadosProduto;
-  const produtos = lerArquivo();
+  return supabase
+    .from('produtos')
+    .insert([dadosProduto])
+    .select();
+}
 
-  const idExiste = produtos.some((p) => p.id === parseInt(id));
-  if (idExiste) {
-    return { erro: `Já existe um produto com o ID ${id}.` };
-  }
+function atualizarProduto(id, dadosAtualizados) {
+  return supabase
+    .from('produtos')
+    .update(dadosAtualizados)
+    .eq('id', id)
+    .select();
+}
 
-  const novoProduto = {
-    id: parseInt(id),
-    nome: nome.trim(),
-    preco: parseFloat(preco),
-    categoria: categoria.trim(),
-    estoque: parseInt(estoque)
-  };
-
-  produtos.push(novoProduto);
-  gravarArquivo(produtos);
-
-  return { produto: novoProduto };
+function deletarProduto(id) {
+  return supabase
+    .from('produtos')
+    .delete()
+    .eq('id', id)
+    .select();
 }
 
 module.exports = {
   listarProdutos,
   buscarProdutoPorId,
-  cadastrarProduto
+  cadastrarProduto,
+  atualizarProduto,
+  deletarProduto
 };
