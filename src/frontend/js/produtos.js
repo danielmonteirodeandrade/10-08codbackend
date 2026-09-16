@@ -1,16 +1,15 @@
 const API_URL = 'http://localhost:3000/produtos';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('token');
-  const usuarioLogado = localStorage.getItem('usuario');
+  const token = sessionStorage.getItem('token');
+  const usuarioLogado = sessionStorage.getItem('usuario');
 
-  // Redireciona para o login caso não haja token
+  // Redireciona para o login caso não haja token na sessão
   if (!token) {
     window.location.href = 'login.html';
     return;
   }
 
-  // Exibe nome do usuário logado
   const elUsuario = document.getElementById('usuario-logado');
   if (elUsuario) {
     elUsuario.textContent = usuarioLogado || 'admin';
@@ -20,13 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnLogout = document.getElementById('btn-logout');
   if (btnLogout) {
     btnLogout.addEventListener('click', () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('usuario');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('usuario');
       window.location.href = 'login.html';
     });
   }
 
-  // Lógica de Cadastro do Produto (Trata o submit e o feedback do botão juntos)
+  // Lógica de Cadastro do Produto
   const formProduto = document.getElementById('form-produto');
   const btnCadastrar = document.getElementById('btn-cadastrar');
 
@@ -34,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     formProduto.addEventListener('submit', async (event) => {
       event.preventDefault();
 
-      // Feedback visual no botão
       if (btnCadastrar) {
         btnCadastrar.disabled = true;
         btnCadastrar.textContent = 'Cadastrando...';
@@ -61,18 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultado = await resposta.json();
 
         if (!resposta.ok) {
-          alert(resultado.mensagem || resultado.error || 'Erro ao cadastrar produto.');
+          alert(resultado.mensagem || resultado.erro || 'Erro ao cadastrar produto.');
           return;
         }
 
         alert('Produto cadastrado com sucesso!');
         formProduto.reset();
-        carregarProdutos(); // Atualiza a lista na tela imediatamente
+        carregarProdutos();
       } catch (erro) {
         console.error(erro);
         alert('Erro de conexão com o servidor.');
       } finally {
-        // Restaura o botão ao estado original
         if (btnCadastrar) {
           btnCadastrar.disabled = false;
           btnCadastrar.textContent = 'Cadastrar Produto';
@@ -81,9 +78,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Carrega a listagem de produtos ao iniciar a página
+  // Lógica da Barra de Pesquisa por ID
+  const formBusca = document.getElementById('form-busca');
+  if (formBusca) {
+    formBusca.addEventListener('submit', (event) => {
+      event.preventDefault();
+      buscarProdutoPorId();
+    });
+  }
+
   carregarProdutos();
 });
+
+// Buscar Produto por ID
+async function buscarProdutoPorId() {
+  const inputBusca = document.getElementById('busca-id');
+  if (!inputBusca) return;
+
+  const id = inputBusca.value.trim();
+
+  if (!id) {
+    carregarProdutos();
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`${API_URL}/${id}`);
+    const produto = await resposta.json();
+
+    if (!resposta.ok) {
+      const listaProdutos = document.getElementById('lista-produtos');
+      if (listaProdutos) {
+        listaProdutos.innerHTML = `<p>${produto.mensagem || 'Produto não encontrado.'}</p>`;
+      }
+      return;
+    }
+
+    exibirProdutos([produto]);
+  } catch (erro) {
+    console.error('Erro ao buscar produto por ID:', erro);
+    alert('Erro de conexão com o servidor.');
+  }
+}
 
 // Buscar e Renderizar Produtos
 async function carregarProdutos() {

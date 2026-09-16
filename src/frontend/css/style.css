@@ -169,3 +169,59 @@ button:hover {
   color: #7c7c8a;
   cursor: not-allowed;
 }
+
+/* Container da Barra de Pesquisa */
+#form-busca {
+  display: flex;
+  gap: 10px;
+  max-width: 400px;
+  margin-bottom: 24px;
+}
+
+#busca-id {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#busca-id:focus {
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+#form-busca button {
+  padding: 10px 18px;
+  background-color: #0066cc;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#form-busca button:hover {
+  background-color: #0052a3;
+}
+
+#form-busca button:active {
+  transform: scale(0.98);
+}
+
+.cabecalho-listagem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.cabecalho-listagem h2 {
+  margin: 0;
+}

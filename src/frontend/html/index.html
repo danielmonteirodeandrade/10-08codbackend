@@ -48,7 +48,16 @@
 
     <!-- Listagem -->
     <section class="card">
-      <h2>Produtos Cadastrados</h2>
+      <div class="cabecalho-listagem">
+        <h2>Produtos Cadastrados</h2>
+        
+        <!-- Barra de Busca alinhada -->
+        <form id="form-busca">
+          <input type="number" id="busca-id" placeholder="Digite o ID para buscar...">
+          <button type="submit">Buscar</button>
+        </form>
+      </div>
+
       <div id="lista-produtos" class="grid-produtos"></div>
     </section>
   </div>
