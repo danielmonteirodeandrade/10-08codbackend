@@ -3,7 +3,7 @@ const fs = require('fs');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
-const supabase = require('../data/supabase');
+const supabase = require('./supabase');
 
 async function migrar() {
   try {
