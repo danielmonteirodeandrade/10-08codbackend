@@ -4,7 +4,7 @@ require('dotenv').config({path: path.resolve(__dirname, '../.env')
 
 const express = require('express');
 const cors = require('cors');
-const rotas = require('./routes/rotas.js');
+const rotas = require('./backend/routes/rotas.js');
 
 const app = express();
 const PORT = process.env.PORT;
