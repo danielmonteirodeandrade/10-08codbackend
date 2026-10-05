@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/produtos';
+const API_URL = 'https://10-08codbackend.vercel.app/produtos';
 
 document.addEventListener('DOMContentLoaded', () => {
   const token = sessionStorage.getItem('token');

@@ -1,4 +1,4 @@
-const LOGIN_URL = 'http://localhost:3000/login';
+const LOGIN_URL = 'https://10-08codbackend.vercel.app/login';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Se já tiver token de sessão ativo, vai direto para a index

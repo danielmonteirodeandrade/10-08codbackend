@@ -18,4 +18,8 @@ app.use('/js', express.static('./frontend/js'));
 
 app.use('/', rotas);
 
+app.get('/', (req, res) => {
+  res.json({ status: 'API online na Vercel!' });
+});
+
 module.exports = app;
